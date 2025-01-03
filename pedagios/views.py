@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Caminho do arquivo Excel
-EXCEL_FILE_PATH = r"F:\Logistica_Florestal\EQUIPE\Sócrates Luis dos Santos\baseVp\vale_pedagio.xlsx"
+EXCEL_FILE_PATH = "/tmp/vale_pedagio.xlsx" 
 
 def salvar_dados_excel(dados):
     # Verificar se o arquivo existe
@@ -51,3 +51,13 @@ class RegistroValePedagioAPIView(APIView):
             return Response({"mensagem": "Dados salvos com sucesso!"}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+from django.http import FileResponse
+
+class DownloadExcelAPIView(APIView):
+    def get(self, request):
+        if os.path.exists(EXCEL_FILE_PATH):
+            return FileResponse(open(EXCEL_FILE_PATH, 'rb'), as_attachment=True, filename="vale_pedagio.xlsx")
+        return Response({"erro": "Arquivo não encontrado"}, status=404)
+
